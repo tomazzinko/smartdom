@@ -1,0 +1,3 @@
+{% for user in mqtt.users -%}
+{{ user }}:{{ password('mqtt_' + user+'_password') }}
+{% endfor %}

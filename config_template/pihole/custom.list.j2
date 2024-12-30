@@ -1,0 +1,3 @@
+{% for domain in proxy.subdomains %}
+{{ proxy.ip }} {{ domain }}.{{ proxy.domain }}
+{% endfor %}
