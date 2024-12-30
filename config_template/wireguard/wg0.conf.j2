@@ -1,0 +1,17 @@
+[Interface]
+PrivateKey = {{ secret("wireguard_wg0_private_key") }}
+ListenPort = {{ wireguard.port }}
+Address = {{ wireguard.address }}
+
+{% for peer in wireguard.peers %}
+[Peer]
+PublicKey = {{ secret( "wireguard_" + peer.name + "_public_key") }}
+PresharedKey = {{ secret( "wireguard_" + peer.name + "_preshared_key") }}
+AllowedIPs = {{ peer.allowed_ips }}
+{% if peer.endpoint %}
+Endpoint = {{ peer.endpoint }}
+{% endif %}
+{% if peer.persistent_keepalive %}
+PersistentKeepalive = {{ peer.persistent_keepalive }}
+{% endif %}
+{% endfor %}

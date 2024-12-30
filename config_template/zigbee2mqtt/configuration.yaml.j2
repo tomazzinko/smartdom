@@ -1,0 +1,20 @@
+permit_join: {{ zigbee2mqtt.permit_join }}
+mqtt:
+  base_topic: {{ secret('mqtt_zigbee2mqtt_topic', 'zigbee2mqtt') }}
+  server: {{ mqtt.server }}
+  user: {{ secret('mqtt_zigbee2mqtt_user', 'zigbee2mqtt') }}
+  password: {{ password('mqtt_zigbee2mqtt_password') }}
+serial:
+  port: /dev/zigbeeHUB
+  adapter: {{ zigbee2mqtt.serial.adapter }}
+frontend: true
+advanced:
+    pan_id: {{ secret('zigbee2mqtt_pan_id', gen_pan_id) }}
+    ext_pan_id: {{ secret('zigbee2mqtt_ext_pan_id', gen_ext_pan_id) }}
+    channel: {{ secret('zigbee2mqtt.channel', '11') }}
+    network_key: {{ secret('zigbee2mqtt_network_key', gen_network_key) }}
+
+homeassistant: {}
+
+devices: devices.yaml
+groups: groups.yaml
