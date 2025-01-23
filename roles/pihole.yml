@@ -1,0 +1,27 @@
+---
+- name: Create Pi-hole directories
+  file:
+    path: /opt/pihole
+    state: directory
+    mode: '0755'
+
+- name: Copy Pi-hole custom.list
+  copy:
+    dest: /opt/pihole/custom.list
+    content: ""
+    force: no
+
+- name: Create Pi-hole container
+  docker_container:
+    name: pihole
+    image: pihole/pihole:latest
+    state: started
+    restart_policy: always
+    env:
+      TZ: "Europe/Berlin"
+      WEBPASSWORD: "{{ pihole_web_password }}"
+    volumes:
+      - /opt/pihole/custom.list:/etc/pihole/custom.list
+    networks:
+      - name: public
+        ipv4_address: "192.168.66.4" 

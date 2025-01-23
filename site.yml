@@ -1,0 +1,21 @@
+---
+- name: Configure SmartDom
+  hosts: all
+  become: yes
+  vars_files:
+    - vars/main.yml
+
+  tasks:
+    - include_tasks: roles/base.yml
+    - include_tasks: roles/network.yml
+    - include_tasks: roles/docker.yml
+    - include_tasks: roles/postgres.yml
+    - include_tasks: roles/mqtt.yml
+    - include_tasks: roles/zigbee.yml
+    - include_tasks: roles/homeassistant.yml
+    - include_tasks: roles/pihole.yml
+    - include_tasks: roles/omada.yml
+    - include_tasks: roles/swag.yml
+    - include_tasks: roles/media.yml
+    - include_tasks: roles/security.yml
+    - include_tasks: roles/portainer.yml 

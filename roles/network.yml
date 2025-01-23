@@ -1,0 +1,32 @@
+---
+- name: Install network tools
+  apt:
+    name:
+      - vlan
+      - bridge-utils
+    state: present
+
+- name: Load 8021q module
+  modprobe:
+    name: 8021q
+    state: present
+
+- name: Ensure 8021q module loads on boot
+  lineinfile:
+    path: /etc/modules
+    line: 8021q
+    create: yes
+
+- name: Create VLAN interface
+  command: >
+    ip link add link "{{ smartdom_network_adapter }}" 
+    name "{{ smartdom_network_adapter }}.{{ smartdom_network_vlan_id }}" 
+    type vlan id "{{ smartdom_network_vlan_id }}"
+  when: >
+    ansible_facts.interfaces is not defined or
+    smartdom_network_adapter + '.' + smartdom_network_vlan_id | string not in ansible_facts.interfaces
+  ignore_errors: yes  # In case interface already exists
+
+- name: Bring VLAN interface up
+  command: "ip link set dev {{ smartdom_network_adapter }}.{{ smartdom_network_vlan_id }} up"
+  ignore_errors: yes  # In case interface is already up 

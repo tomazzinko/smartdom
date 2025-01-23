@@ -1,0 +1,40 @@
+---
+- name: Create SWAG directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - /opt/swag/config
+    - /opt/swag/dns-conf
+    - /opt/swag/proxy-confs
+
+- name: Copy SWAG configuration files
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: '0644'
+  loop:
+    - { src: files/hetzner.ini, dest: /opt/swag/dns-conf/hetzner.ini }
+    - { src: files/home.subdomain.conf, dest: /opt/swag/proxy-confs/home.subdomain.conf }
+    - { src: files/zigbee.subdomain.conf, dest: /opt/swag/proxy-confs/zigbee.subdomain.conf }
+    - { src: files/docker.subdomain.conf, dest: /opt/swag/proxy-confs/docker.subdomain.conf }
+    - { src: files/tv.subdomain.conf, dest: /opt/swag/proxy-confs/tv.subdomain.conf }
+    - { src: files/torrent.subdomain.conf, dest: /opt/swag/proxy-confs/torrent.subdomain.conf }
+
+- name: Create SWAG container
+  docker_container:
+    name: swag
+    image: linuxserver/swag:2.11.0
+    state: started
+    restart_policy: unless-stopped
+    env_files:
+      - /opt/swag/.env
+    volumes:
+      - swag-config:/config
+      - /opt/swag/dns-conf/hetzner.ini:/config/dns-conf/hetzner.ini
+      - /opt/swag/proxy-confs:/config/nginx/proxy-confs
+    networks:
+      - name: public
+        ipv4_address: "192.168.66.5"
+      - name: proxy 

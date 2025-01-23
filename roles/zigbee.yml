@@ -1,0 +1,38 @@
+---
+- name: Create Zigbee2MQTT directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - /opt/zigbee2mqtt/data
+    - /opt/zigbee2mqtt/config
+
+- name: Configure Zigbee2MQTT
+  copy:
+    dest: /opt/zigbee2mqtt/config/configuration.yaml
+    content: |
+      homeassistant: true
+      permit_join: false
+      mqtt:
+        base_topic: zigbee2mqtt
+        server: mqtt://mosquitto:1883
+        user: "{{ mqtt_user }}"
+        password: "{{ mqtt_password }}"
+      serial:
+        port: /dev/ttyACM0
+      advanced:
+        network_key: "{{ zigbee_network_key }}"
+
+- name: Create Zigbee2MQTT container
+  docker_container:
+    name: zigbee2mqtt
+    image: koenkk/zigbee2mqtt:latest
+    state: started
+    restart_policy: always
+    devices:
+      - /dev/ttyACM0:/dev/ttyACM0
+    volumes:
+      - /opt/zigbee2mqtt/data:/app/data
+      - /opt/zigbee2mqtt/config:/app/config
+    network_mode: host 

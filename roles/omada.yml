@@ -1,0 +1,27 @@
+---
+- name: Create Omada directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - /opt/omada/data
+    - "{{ logs_path }}/omada"
+
+- name: Create Omada container
+  docker_container:
+    name: omada-controller
+    image: mbentley/omada-controller:5.13
+    state: started
+    restart_policy: unless-stopped
+    network_mode: host
+    env_files:
+      - /opt/omada/.env
+    volumes:
+      - /opt/omada/data:/opt/tplink/EAPController/data
+      - "{{ logs_path }}/omada:/opt/tplink/EAPController/logs"
+    ulimits:
+      nofile:
+        soft: 4096
+        hard: 8192
+    stop_timeout: 60 

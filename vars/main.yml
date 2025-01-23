@@ -1,0 +1,17 @@
+---
+# Network Configuration
+smartdom_network_adapter: "{{ lookup('env', 'SMARTDOM_NETWORK_ADAPTER') }}"
+smartdom_network_vlan_id: "{{ lookup('env', 'SMARTDOM_NETWORK_VLAN_ID') }}"
+
+# MQTT Configuration
+mqtt_user: "{{ lookup('env', 'MQTT_USER') }}"
+mqtt_password: "{{ lookup('env', 'MQTT_PASSWORD') }}"
+
+# Zigbee Configuration
+zigbee_network_key: "{{ lookup('env', 'ZIGBEE_NETWORK_KEY') }}"
+
+# Pi-hole Configuration
+pihole_web_password: "{{ lookup('env', 'PIHOLE_WEB_PASSWORD') }}"
+
+# Paths Configuration
+logs_path: "{{ lookup('env', 'LOGS_PATH') }}" 

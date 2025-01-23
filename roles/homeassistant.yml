@@ -1,0 +1,25 @@
+---
+- name: Create Home Assistant directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - /opt/homeassistant/config
+    - /opt/homeassistant/custom_components
+
+- name: Create Home Assistant container
+  docker_container:
+    name: homeassistant
+    image: homeassistant/home-assistant:latest
+    state: started
+    restart_policy: always
+    network_mode: host
+    volumes:
+      - /opt/homeassistant/config:/config
+      - /opt/homeassistant/custom_components:/config/custom_components
+      - /etc/localtime:/etc/localtime:ro
+    devices:
+      - /dev/ttyACM0:/dev/ttyACM0
+    environment:
+      TZ: "Europe/Ljubljana" 

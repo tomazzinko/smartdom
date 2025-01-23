@@ -1,0 +1,21 @@
+---
+- name: Create PostgreSQL directories
+  file:
+    path: /opt/postgres
+    state: directory
+    mode: '0755'
+
+- name: Create PostgreSQL container
+  docker_container:
+    name: postgres-ha
+    image: postgres:latest
+    state: started
+    restart_policy: always
+    env_files:
+      - /opt/postgres/.env
+    volumes:
+      - postgres-ha:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - name: postgres-ha 

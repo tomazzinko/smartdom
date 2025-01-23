@@ -1,0 +1,50 @@
+---
+- name: Create media directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - /opt/jellyfin/config
+    - /opt/jellyfin/data
+    - /opt/qbittorrent/config
+    - /mnt/disk1/downloads
+
+- name: Create Jellyfin container
+  docker_container:
+    name: jellyfin
+    image: lscr.io/linuxserver/jellyfin:latest
+    state: started
+    restart_policy: unless-stopped
+    volumes:
+      - /opt/jellyfin/config:/config
+      - /opt/jellyfin/data:/data
+      - /mnt/disk1/downloads:/downloads
+    networks:
+      - name: proxy
+      - name: public
+        ipv4_address: "192.168.66.15"
+
+- name: Create qBittorrent container
+  docker_container:
+    name: qbittorrent
+    image: lscr.io/linuxserver/qbittorrent:latest
+    state: started
+    restart_policy: unless-stopped
+    env:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "Etc/UTC"
+      WEBUI_PORT: "8080"
+      TORRENTING_PORT: "6881"
+    volumes:
+      - /opt/qbittorrent/config:/config
+      - /mnt/disk1/downloads:/downloads
+    ports:
+      - "8080:8080"
+      - "6881:6881"
+      - "6881:6881/udp"
+    networks:
+      - name: proxy
+      - name: public
+        ipv4_address: "192.168.66.10" 

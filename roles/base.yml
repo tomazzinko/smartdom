@@ -1,0 +1,30 @@
+---
+- name: Update and upgrade apt packages
+  apt:
+    upgrade: yes
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Install base packages
+  apt:
+    name:
+      - git
+      - curl
+      - wget
+      - vim
+      - python3
+      - python3-pip
+      - jq
+      - zsh
+    state: present
+
+- name: Set timezone
+  timezone:
+    name: Europe/Ljubljana
+
+- name: Create smartdom user
+  user:
+    name: smartdom
+    shell: /bin/zsh
+    groups: adm,dialout,cdrom,sudo,audio,video,plugdev,games,users,input,netdev,spi,i2c,gpio,docker
+    append: yes 
